@@ -14,14 +14,20 @@ function generateRandomColors(nbColors) {
     return {backgroundColors: backgroundColors, borderColors: borderColors};
 }
 
-function generateLabelsAndValues(data) {
+function generateLabelsAndValues(data, entryNames) {
     let labels = [];
     let values = [];
+    let otherInfo = [];
     data.forEach(element => {
-        labels.push(element.label);
+        labels.push(element[entryNames[0]]);
         values.push(element.value);
+        let infos = "";
+        for(let i=1; i<length-2; i++) {
+          infos += element[entryNames[i]];
+        }
+        otherInfo.push(infos);
     });
-    return {labels: labels, values: values};
+    return {labels: labels, values: values, otherInfo: otherInfo};
 }
 
 function displayChart(ctx, label, labels, values) {
