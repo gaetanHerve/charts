@@ -1,7 +1,6 @@
 function generateRandomColors(nbColors) {
     let backgroundColors = [];
     let borderColors = [];
-
     for (let i = 0; i < nbColors; i++) {
         let sb = 'rgba(';
         for (let j = 0; j < 3; j++) {
@@ -9,7 +8,6 @@ function generateRandomColors(nbColors) {
         }
         backgroundColors.push(sb + 0.2 + ')');
         borderColors.push(sb + 1 + ')');
-        
     }
     return {backgroundColors: backgroundColors, borderColors: borderColors};
 }
@@ -30,10 +28,14 @@ function generateLabelsAndValues(data, entryNames) {
     return {labels: labels, values: values, otherInfo: otherInfo};
 }
 
-function displayChart(ctx, label, labels, values) {
+function displayChart(ctx, label, labels, values, type) {
     let colors = generateRandomColors(labels.length);
+    if(type === "") {
+      type = "bar";
+    }
+    type = (type || "bar");
     let chart = new Chart(ctx, {
-      type: 'bar',
+      type: type,
       data: {
         labels: labels,
         datasets: [{
@@ -57,6 +59,25 @@ function displayChart(ctx, label, labels, values) {
     return chart;
 }
 
+function updateType(chart, type) {
+  console.log(chart);
+  if (chart && chart.type && type) {
+    chart.type = type;
+  }
+  chart.update();
+}
+
+function removeData(chart) {
+  console.log(chart);
+  if (chart.data) {
+    chart.data.labels.pop();
+    chart.data.datasets.forEach((dataset) => {
+        dataset.data.pop();
+    });
+    chart.update();
+  }
+}
+
 function printFileAttributes(file, contents) {
   console.log( "Got the file" + "\n" +
     "name: " + file.name + "\n" +
@@ -65,8 +86,6 @@ function printFileAttributes(file, contents) {
     "starts with: " + contents.substr(1, contents.indexOf("n"))
   );
 }
-
-
 
 /**
  * 
@@ -156,4 +175,4 @@ function CSVToArray( strData, strDelimiter ){
     return( arrData );
 }
 
-export default {generateRandomColors, generateLabelsAndValues, displayChart, printFileAttributes, CSVToArray};
+export default {generateRandomColors, generateLabelsAndValues, displayChart, printFileAttributes, removeData, updateType, CSVToArray};

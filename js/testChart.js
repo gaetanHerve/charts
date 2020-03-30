@@ -1,30 +1,46 @@
 import Utils from './Utils.js';
 
+let ctx;
+let type = "";
+let chartObj;
 
-// Make it a class !
-
-
-let ctx = document.getElementById('chart').getContext('2d');
-
-let fileToRead = 'data/total-alcohol-consumption-per-capita-litres-of-pure-alcohol.CSV';
+$(document).ready(function() {
+  ctx = $("#chart");
+  $('#fileinput').change(readSingleFile);
+  $('#type').change(function() {
+    type = $(this).children("option:selected").val();
+    console.log($(this).children);
+    console.log(type);
+    // Doesn't work !
+    Utils.updateType(chartObj, type);
+  });
+});
 
 function readSingleFile(evt) {
-  let chartObj;
+  //Retrieve the first (and only!) File from the FileList object
+  let file = evt.target.files[0];
+
+  // Make it a class !
   let dataToDisplay = [];
   let label = "";
   let values = [];
   let labels = [];
-  //Retrieve the first (and only!) File from the FileList object
-  let file = evt.target.files[0]; 
+
   if (file) {
     let reader = new FileReader();
-    reader.onload = function(e) { 
+    reader.onload = function(e) {
       let contents = e.target.result;
+      file = evt.target.files[0];
+      chartObj = "";
+      dataToDisplay = [];
+      label = "";
+      values = [];
+      labels = [];
       // Utils.printFileAttributes(file, contents);
     };
     reader.readAsText(file);
 
-    reader.onloadend = function (e) {
+    reader.onloadend = function(e) {
       return new Promise((resolve, reject) => {
         try {
           let headers = [];
@@ -34,11 +50,6 @@ function readSingleFile(evt) {
 
           lines.splice(0, 1);
           let content = lines.join('\n');
-
-
-
-          let splitData = allData.split('"');
-
           console.log('firstLine : ' + firstLine);
           if (firstLine.includes('"')) {
             let tmp = firstLine.split('"');
@@ -48,8 +59,8 @@ function readSingleFile(evt) {
             headers = firstLine.split(',');
           }
 
-          label = headers[headers.length-1];
-          headers.splice(headers.length-1, 1);
+          label = headers[headers.length - 1];
+          headers.splice(headers.length - 1, 1);
 
           let entryNames = headers;
           entryNames.push("value");
@@ -76,16 +87,15 @@ function readSingleFile(evt) {
         }
       }).then((resolve, reject) => {
         if (resolve) {
-          chartObj = Utils.displayChart(ctx, label, labels, values);
+          Utils.removeData(chartObj);
+          chartObj = Utils.displayChart(ctx, label, labels, values, type);
           console.log(resolve);
         } else if (reject) {
           console.log(reject);
         }
       });
     };
-  } else { 
+  } else {
     alert("Failed to load file");
   }
 }
-
-document.getElementById('fileinput').addEventListener('change', readSingleFile, false);
