@@ -51,17 +51,31 @@ function displayChart(ctx, label, labels, values) {
     return chart;
 }
 
+function printFileAttributes(file, contents) {
+  console.log( "Got the file" + "\n" +
+    "name: " + file.name + "\n" +
+    "type: " + file.type + "\n" +
+    "size: " + file.size + " bytesn" + "\n" +
+    "starts with: " + contents.substr(1, contents.indexOf("n"))
+  );
+}
 
 
-// This will parse a delimited string into an array of
-// arrays. The default delimiter is the comma, but this
-// can be overriden in the second argument.
+
+/**
+ * 
+ * CSVToArray() function thanks to Ben NAdel
+ * https://www.bennadel.com/blog/1504-ask-ben-parsing-csv-strings-with-javascript-exec-regular-expression-command.htm
+ * This will parse a delimited string into an array of
+ * arrays. The default delimiter is the comma, but this
+ * can be overriden in the second argument.
+ * 
+ **/ 
 function CSVToArray( strData, strDelimiter ){
     // Check to see if the delimiter is defined. If not,
     // then default to comma.
     strDelimiter = (strDelimiter || ",");
     let strMatchedValue;
-    console.log("strData : " + strData);
 
     // Create a regular expression to parse the CSV values.
     let objPattern = new RegExp(
@@ -88,7 +102,7 @@ function CSVToArray( strData, strDelimiter ){
 
     // Keep looping over the regular expression matches
     // until we can no longer find a match.
-    while (arrMatches == objPattern.exec( strData )){
+    while (arrMatches = objPattern.exec( strData )){
 
         // Get the delimiter that was found.
         let strMatchedDelimiter = arrMatches[ 1 ];
@@ -136,4 +150,4 @@ function CSVToArray( strData, strDelimiter ){
     return( arrData );
 }
 
-export default {generateRandomColors, generateLabelsAndValues, displayChart, CSVToArray};
+export default {generateRandomColors, generateLabelsAndValues, displayChart, printFileAttributes, CSVToArray};
